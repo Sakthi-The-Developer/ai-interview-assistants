@@ -1,0 +1,214 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>AI Interview Assistant</title>
+</head>
+<body>
+
+<h2>AI Interview Assistant</h2>
+
+<input type="text" id="question" placeholder="Ask question">
+<button onclick="ask()">Send</button>
+
+<p id="answer"></p>
+
+<script>
+async function ask() {
+    let question = document.getElementById("question").value;
+
+    let res = await fetch("http://127.0.0.1:8000/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ question })
+    });
+
+    let data = await res.json();
+
+    document.getElementById("answer").innerText = data.answer;
+}
+</script>
+
+</body>
+</html> --> 
+
+
+<!-- secondone -->
+
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>AI Interview Assistant</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 500px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        input {
+            width: 75%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #38bdf8;
+        }
+
+        .chat {
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .user {
+            text-align: right;
+            color: #38bdf8;
+            margin: 10px;
+        }
+
+        .bot {
+            text-align: left;
+            color: #22c55e;
+            margin: 10px;
+        }
+
+        .loading {
+            color: gray;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🤖 AI Interview Assistant</h2>
+
+    <input type="text" id="question" placeholder="Ask interview question">
+    <button onclick="ask()">Send</button>
+
+    <div class="chat" id="chat"></div>
+</div>
+<script>
+let chatHistory = [];
+
+async function ask() {
+    let question = document.getElementById("question").value;
+    let chat = document.getElementById("chat");
+
+    if (!question.trim()) return;
+
+    // ✅ USER MESSAGE SAFE
+    let userDiv = document.createElement("div");
+    userDiv.className = "user";
+    userDiv.innerText = question;
+    chat.appendChild(userDiv);
+
+    // ✅ LOADING SAFE
+    let loadingDiv = document.createElement("div");
+    loadingDiv.className = "loading";
+    loadingDiv.id = "loading";
+    loadingDiv.innerText = "Thinking...";
+    chat.appendChild(loadingDiv);
+
+    try {
+        let res = await fetch("http://127.0.0.1:8000/ask", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ question })
+        });
+
+        let data = await res.json();
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // remove loading
+        loadingDiv.remove();
+
+        // ✅ BOT MESSAGE SAFE
+        let botDiv = document.createElement("div");
+        botDiv.className = "bot";
+        botDiv.innerText = data.answer || "No response";
+        chat.appendChild(botDiv);
+
+        chatHistory.push({question, answer: data.answer});
+
+    } catch (error) {
+        console.error(error);
+        loadingDiv.remove();
+
+        let errDiv = document.createElement("div");
+        errDiv.className = "bot";
+        errDiv.innerText = "❌ Error occurred";
+        chat.appendChild(errDiv);
+    }
+
+    document.getElementById("question").value = "";
+    chat.scrollTop = chat.scrollHeight;
+}
+</script>
+</body>
+</html>  
+
+<!-- Alternate -->
+<!-- <script>
+let chatHistory = []; // 🧠 history store
+
+async function ask() {
+    let question = document.getElementById("question").value;
+    let chat = document.getElementById("chat");
+
+    // show user message
+    chat.innerHTML += `<div class="user">${question}</div>`;
+
+    // loading
+    chat.innerHTML += `<div class="loading" id="loading">Thinking...</div>`;
+
+    try {
+        let res = await fetch("http://127.0.0.1:8000/ask", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ question })
+        });
+
+        let data = await res.json();
+
+        // Add artificial delay so user can read "Thinking..."
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // remove loading
+        document.getElementById("loading").remove();
+
+        // show bot answer
+        chat.innerHTML += `<div class="bot">${data.answer}</div>`;
+
+        // save history
+        chatHistory.push({question, answer: data.answer});
+
+    } catch (error) {
+        document.getElementById("loading").remove();
+        chat.innerHTML += `<div class="bot">❌ Error occurred</div>`;
+    }
+
+    document.getElementById("question").value = "";
+    chat.scrollTop = chat.scrollHeight;
+}
+</script> -->
+
